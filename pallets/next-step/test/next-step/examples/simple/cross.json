@@ -1,0 +1,262 @@
+{
+  "id": "Definitions_1goyl9t",
+  "targetNamespace": "http://bpmn.io/schema/bpmn",
+  "exporter": "Camunda Modeler",
+  "exporterVersion": "5.0.0",
+  "executionPlatform": "Camunda Cloud",
+  "executionPlatformVersion": "8.0.0",
+  "collaboration": {
+    "id": "Collaboration_0ui5mo5",
+    "participant": [
+      {
+        "id": "Participant_06tehfc",
+        "processRef": "Process_12wqq4x"
+      },
+      {
+        "id": "Participant_1y7piec",
+        "processRef": "Process_1rc9ng9"
+      }
+    ],
+    "messageFlow": [
+      {
+        "id": "Flow_0hmlfxt",
+        "sourceRef": "Activity_0aiq25p",
+        "targetRef": "Activity_0a9phjm"
+      },
+      {
+        "id": "Flow_0en09ye",
+        "sourceRef": "Activity_0a9phjm",
+        "targetRef": "Activity_1eekbf4"
+      }
+    ]
+  },
+  "process": [
+    {
+      "id": "Process_12wqq4x",
+      "isExecutable": "true",
+      "startEvent": {
+        "id": "StartEvent_1",
+        "name": "START",
+        "outgoing": "Flow_1rydmym"
+      },
+      "sequenceFlow": [
+        {
+          "id": "Flow_1rydmym",
+          "sourceRef": "StartEvent_1",
+          "targetRef": "Activity_0aiq25p"
+        },
+        {
+          "id": "Flow_18a12ls",
+          "sourceRef": "Activity_1eekbf4",
+          "targetRef": "Event_1iw30b7"
+        }
+      ],
+      "endEvent": {
+        "id": "Event_1iw30b7",
+        "name": "END",
+        "incoming": "Flow_18a12ls"
+      },
+      "userTask": [
+        {
+          "id": "Activity_0aiq25p",
+          "name": "task_011",
+          "extensionElements": {
+            "assignmentDefinition": {
+              "assignee": "Alith"
+            }
+          },
+          "incoming": "Flow_1rydmym"
+        },
+        {
+          "id": "Activity_1eekbf4",
+          "name": "task_012",
+          "extensionElements": {
+            "assignmentDefinition": {
+              "assignee": "Charleth"
+            }
+          },
+          "outgoing": "Flow_18a12ls"
+        }
+      ]
+    },
+    {
+      "id": "Process_1rc9ng9",
+      "isExecutable": "false",
+      "userTask": {
+        "id": "Activity_0a9phjm",
+        "name": "task_021",
+        "extensionElements": {
+          "assignmentDefinition": {
+            "assignee": "Baltathar"
+          }
+        }
+      }
+    }
+  ],
+  "BPMNDiagram": {
+    "id": "BPMNDiagram_1",
+    "BPMNPlane": {
+      "id": "BPMNPlane_1",
+      "bpmnElement": "Collaboration_0ui5mo5",
+      "BPMNShape": [
+        {
+          "id": "Participant_06tehfc_di",
+          "bpmnElement": "Participant_06tehfc",
+          "isHorizontal": "true",
+          "Bounds": {
+            "x": "129",
+            "y": "80",
+            "width": "759",
+            "height": "250"
+          }
+        },
+        {
+          "id": "_BPMNShape_StartEvent_2",
+          "bpmnElement": "StartEvent_1",
+          "Bounds": {
+            "x": "179",
+            "y": "159",
+            "width": "36",
+            "height": "36"
+          },
+          "BPMNLabel": {
+            "Bounds": {
+              "x": "180",
+              "y": "202",
+              "width": "36",
+              "height": "14"
+            }
+          }
+        },
+        {
+          "id": "Event_1iw30b7_di",
+          "bpmnElement": "Event_1iw30b7",
+          "Bounds": {
+            "x": "752",
+            "y": "159",
+            "width": "36",
+            "height": "36"
+          },
+          "BPMNLabel": {
+            "Bounds": {
+              "x": "758",
+              "y": "202",
+              "width": "24",
+              "height": "14"
+            }
+          }
+        },
+        {
+          "id": "Activity_1wbaums_di",
+          "bpmnElement": "Activity_0aiq25p",
+          "Bounds": {
+            "x": "270",
+            "y": "137",
+            "width": "100",
+            "height": "80"
+          },
+          "BPMNLabel": null
+        },
+        {
+          "id": "Activity_0jlpnc6_di",
+          "bpmnElement": "Activity_1eekbf4",
+          "Bounds": {
+            "x": "590",
+            "y": "137",
+            "width": "100",
+            "height": "80"
+          },
+          "BPMNLabel": null
+        },
+        {
+          "id": "Participant_1y7piec_di",
+          "bpmnElement": "Participant_1y7piec",
+          "isHorizontal": "true",
+          "Bounds": {
+            "x": "129",
+            "y": "350",
+            "width": "600",
+            "height": "250"
+          }
+        },
+        {
+          "id": "Activity_0zv7d2x_di",
+          "bpmnElement": "Activity_0a9phjm",
+          "Bounds": {
+            "x": "300",
+            "y": "480",
+            "width": "100",
+            "height": "80"
+          },
+          "BPMNLabel": null
+        }
+      ],
+      "BPMNEdge": [
+        {
+          "id": "Flow_1rydmym_di",
+          "bpmnElement": "Flow_1rydmym",
+          "waypoint": [
+            {
+              "x": "215",
+              "y": "177"
+            },
+            {
+              "x": "270",
+              "y": "177"
+            }
+          ]
+        },
+        {
+          "id": "Flow_18a12ls_di",
+          "bpmnElement": "Flow_18a12ls",
+          "waypoint": [
+            {
+              "x": "690",
+              "y": "177"
+            },
+            {
+              "x": "752",
+              "y": "177"
+            }
+          ]
+        },
+        {
+          "id": "Flow_0hmlfxt_di",
+          "bpmnElement": "Flow_0hmlfxt",
+          "waypoint": [
+            {
+              "x": "320",
+              "y": "217"
+            },
+            {
+              "x": "320",
+              "y": "480"
+            }
+          ]
+        },
+        {
+          "id": "Flow_0en09ye_di",
+          "bpmnElement": "Flow_0en09ye",
+          "waypoint": [
+            {
+              "x": "400",
+              "y": "520"
+            },
+            {
+              "x": "530",
+              "y": "520"
+            },
+            {
+              "x": "530",
+              "y": "177"
+            },
+            {
+              "x": "590",
+              "y": "177"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

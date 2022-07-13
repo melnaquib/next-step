@@ -15,3 +15,7 @@ services:
         source: ./.local
         target: /root/.local
     command: bash -c "cargo build --release && ./target/release/node-template --dev --ws-external"
+
+  set-in-stone:
+    build:
+      context: ./dapp/set-in-stone

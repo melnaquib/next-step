@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>set in S T O N E .</title>
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@9.3.1/dist/assets/diagram-js.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@9.3.1/dist/assets/bpmn-font/css/bpmn.css" />
+    <script src="https://unpkg.com/jquery@3.6.0/dist/jquery.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gojs/2.0.16/go.js'></script>
+    <script src="https://unpkg.com/bpmn-js@9.3.1/dist/bpmn-modeler.development.js"></script>
+    <link rel="stylesheet" href="./style.css">
+
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.css"></link>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.13.1/jquery-ui.min.js"></script>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body style="width: 95%; height: 95%;">
+    <div id="canvas"></div>
+
+    <div id="bpmn-buttons">
+        <!-- <input type="file" id="uploadButton" accept=".bpmn, .xml"><span class="ui-icon ui-icon-upload"></span></input> -->
+        <button id="uploadButton"><span class="ui-icon ui-icon-upload"></span></button>
+        <button id="downloadButton"><span class="ui-icon ui-icon-download"></span></button>
+        <button id="startButton"><span class="ui-icon ui-icon-play"></span></button>
+    </div>
+
+    <script>
+        $( "#bpmn-buttons" ).buttonset();
+    </script>
+    <!-- partial -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/gojs/2.0.16/go.js'>
+    </script>
+</body>
+
+</html>

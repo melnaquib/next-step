@@ -1,0 +1,45 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "lldb",
+        "request": "launch",
+        "name": "Build & Launch NextStep Node (Linux)",
+        "preLaunchTask": "Build NextStep (debug symbols, no warnings)",
+        "program": "${workspaceFolder}/target_nowarn/release/node-template",
+        "args": [
+          "--dev",
+          "--execution",
+          "native"
+        ],
+        "cwd": "${workspaceFolder}",
+        "sourceLanguages": [
+          "rust"
+        ],
+        "sourceMap": {
+          "/rustc/*": "${dbgconfig:rustc_path}"
+        }
+      },
+      {
+        "type": "lldb",
+        "request": "launch",
+        "name": "Launch NextStep Node (Linux)",
+        "program": "${workspaceFolder}/target_nowarn/release/node-template",
+        "args": [
+          "--dev",
+          "--execution",
+          "native"
+        ],
+        "cwd": "${workspaceFolder}",
+        "sourceLanguages": [
+          "rust"
+        ],
+        "sourceMap": {
+          "/rustc/*": "${dbgconfig:rustc_path}"
+        }
+      },
+]
+}

@@ -4,6 +4,15 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "Build NextStep (debug symbols, no warnings)",
+            "type": "shell",
+            "command": "RUSTFLAGS='-g -A warnings' cargo b -r --target-dir=target_nowarn",
+            "presentation": {
+              "reveal": "always",
+              "panel": "new"
+            }
+        },
+        {
             "label": "Run ",
             "type": "shell",
             "command": "cargo",
