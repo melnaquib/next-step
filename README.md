@@ -21,13 +21,19 @@ managerial audience to use standard bpmn modeler tools, or 'set in S T O N E .' 
 ## Getting Started
 
 ```
+# run next-step parachain
 docker-compose up
+
+#run set in S T O N E , dapp
 cd dapp/set-in-stone
 docker build . -t set-in-stone
 docker run  -p=8080:8080 -t set-in-stone
+
 ```
 ### set in S T O N E .
 #### open in your browser http://localhost:8080
 
 
-## Future wor
+## Demo Videos
+
+**TODO**
