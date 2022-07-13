@@ -3,7 +3,7 @@ version: "3.2"
 services:
   dev:
     container_name: node-template
-    image: paritytech/ci-linux:974ba3ac-20201006
+    image: paritytech/ci-linux:production
     working_dir: /var/www/node-template
     ports:
       - "9944:9944"
@@ -15,7 +15,3 @@ services:
         source: ./.local
         target: /root/.local
     command: bash -c "cargo build --release && ./target/release/node-template --dev --ws-external"
-
-  set-in-stone:
-    build:
-      context: ./dapp/set-in-stone
