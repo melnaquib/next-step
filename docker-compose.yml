@@ -1,17 +1,28 @@
 version: "3.2"
 
 services:
-  dev:
-    container_name: node-template
-    image: paritytech/ci-linux:production
-    working_dir: /var/www/node-template
+  next-step:
+    build: .
     ports:
       - "9944:9944"
+      - "9933:9933"
+      - "9615:9615"
+      - "30333:30333"
+    
+  set-in-stone:
+    build: dapp/set-in-stone
+    ports:
+      - "80:8080"
+    depends_on:
+      - next-step
+
+  polkadot-ui:
+    # container_name: polkadot-ui
+    image: jacogr/polkadot-js-apps:latest
+    ports:
+      - "8080:80"
     environment:
-      - CARGO_HOME=/var/www/node-template/.cargo
-    volumes:
-      - .:/var/www/node-template
-      - type: bind
-        source: ./.local
-        target: /root/.local
-    command: bash -c "cargo build --release && ./target/release/node-template --dev --ws-external"
+      WS_URL: ws://127.0.0.1:9944 
+    depends_on:
+      - next-step
+      

@@ -33,4 +33,5 @@ ENV PROFILE ${PROFILE}
 # The execution will re-compile the project to run it
 # This allows to modify the code and not have to re-compile the
 # dependencies.
-CMD cargo run --bin frontier-template-node "--$PROFILE" -- --dev
+CMD cargo run --bin frontier-template-node "--$PROFILE" -- --dev --execution native \
+	--prometheus-external --unsafe-rpc-external --unsafe-ws-external
