@@ -2,27 +2,16 @@ use super::types;
 
 use sp_std::collections::btree_map::BTreeMap;
 use sp_std::vec::Vec;
-// use sp_std::iter::map;
-
-// use roxmltree;
-// extern crate sxd_document;
-// extern crate sxd_xpath;
-
-// use txml;
 use reader_for_microxml::*;
-
-pub type on_element_end = fn(path: &Vec<&str>, attrs: &Vec<BTreeMap<&str, types::Str>>);
-
-pub trait SaxHandler {
-	fn on_element_end(&mut self, path: &Vec<&str>, attrs: &Vec<BTreeMap<&str, types::Str>>);
-}
+use sp_std::boxed::Box;
 
 pub type XmlStr = types::Str;
+pub type OnElementEnd<'a> = dyn FnMut(&Vec<&str>, &Vec<BTreeMap<&str, types::Str>>) + 'a;
 
-pub fn visit_element_end(xml_str: &XmlStr, mut sax_handler: &mut dyn SaxHandler) {
+pub fn visit_element_end(xml_str: &XmlStr, on_element_end: & mut OnElementEnd) {
 	// micro Xml cannot process xml declaration
 	// so skipping first line; first newline character
-	let index = xml_str.iter().position(|&c| c == 0x0a).unwrap();
+	let index = xml_str.iter().position(|&c| c == b'\n').unwrap();
 	let xml_str = &xml_str[index..].to_vec();
 
 	let mut reader_iterator = ReaderForMicroXml::new(types::to_str(xml_str));
@@ -46,7 +35,9 @@ pub fn visit_element_end(xml_str: &XmlStr, mut sax_handler: &mut dyn SaxHandler)
 				Token::Comment(txt) => {}
 				Token::TextNode(txt) => {}
 				Token::EndElement(name) => {
-					sax_handler.on_element_end(&path, &attrs);
+
+					on_element_end(&path, &attrs);
+
 					attrs.pop();
 					path.pop();
 				}

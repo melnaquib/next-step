@@ -9,7 +9,7 @@
         "request": "launch",
         "name": "Build & Launch NextStep Node (Linux)",
         "preLaunchTask": "Build NextStep (debug symbols, no warnings)",
-        "program": "${workspaceFolder}/target_nowarn/release/node-template",
+        "program": "${workspaceFolder}/target/release/frontier-template-node",
         "args": [
           "--dev",
           "--execution",

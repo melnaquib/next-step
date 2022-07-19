@@ -1,38 +1,40 @@
-use super::bpm;
-use super::bpmn;
-use super::types;
-
-// use sp_io::hashing;
+use super::*;
+use frame_support::pallet_prelude::*;
 
 #[inline(always)]
-pub fn deploy_bpmn(bpmn_xml: bpmn::BpmnXml) -> types::DeProcessId {
-	types::Str::new()
+pub fn start<T: Config>(owner: &T::AccountId, bpmn_str: &bpmn::BpmnStr) -> DispatchResult {
+	let deprocess = <DeProcessCount<T>>::get() + 1;
+	<DeProcessCount<T>>::set(deprocess);
+	<DeProcessOwners<T>>::insert(deprocess, owner);
+
+	bpmn::store_model_spec_bpmn::<T>(&deprocess, bpmn_str);
+	bpm::start::<T>(owner, &deprocess);
+
+	Ok(())
 }
 
 #[inline(always)]
-pub fn start(deprocess: types::DeProcessId) -> types::DeProcessId {
-	types::Str::new()
+pub fn step<T: Config>(
+	sender: &T::AccountId,
+	deprocess: &types::DeProcessId,
+	action: &types::Action,
+	action_data: &types::ActionData,
+) -> DispatchResult {
+	bpm::step::<T>(sender, deprocess, action, action_data)
 }
 
-trait TT {}
-
-#[inline(always)]
-pub fn deploy_bpmn_and_start<Storage: bpm::DeProcessStorage>(
-	bpmn_xml: bpmn::BpmnXml,
-) -> types::DeProcessId {
-	// let deprocess: types::DeProcessId = Count::get();
-
-	let deprocess = deploy_bpmn(bpmn_xml);
-	let deprocess = start(deprocess);
-	deprocess
+pub fn assign<T: Config>(
+	owner: &T::AccountId,
+	role: &types::Str,
+	account: &T::AccountId,
+) -> DispatchResult {
+	access::assign::<T>(owner, role, account)
 }
 
-#[inline(always)]
-pub fn step(deprocess: types::DeProcessId, action: types::Action) -> bool {
-	true
-}
-
-#[inline(always)]
-pub fn action_actor(deprocess: types::DeProcessId, action: &types::Action) -> types::Actor {
-	types::Str::new()
+pub fn unassign<T: Config>(
+	owner: &T::AccountId,
+	role: &types::Str,
+	account: &T::AccountId,
+) -> DispatchResult {
+	access::unassign::<T>(owner, role, account)
 }

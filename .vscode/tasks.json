@@ -1,12 +1,10 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
+	"version": "2.0.0",
+	"tasks": [
         {
             "label": "Build NextStep (debug symbols, no warnings)",
             "type": "shell",
-            "command": "RUSTFLAGS='-g -A warnings' cargo b -r --target-dir=target_nowarn",
+            "command": "RUSTFLAGS=-g cargo lbuild -r",
             "presentation": {
               "reveal": "always",
               "panel": "new"
@@ -41,6 +39,15 @@
                 }
             }
             ]
-        }
-    ]
+        },
+		{
+			"type": "npm",
+			"script": "build",
+			"path": "dapp/set-in-stone",
+			"group": "build",
+			"problemMatcher": [],
+			"label": "npm: build - dapp/set-in-stone",
+			"detail": "webpack --config ./bundler/webpack.prod.js"
+		}
+	]
 }

@@ -1,80 +1,56 @@
-use super::bpmn;
-use super::types;
+use super::*;
+use frame_support::pallet_prelude::*;
 
-use sp_io::hashing;
-use sp_std::str;
-use sp_std::vec::Vec;
-
-// pub fn model_id(data: &[u8]) -> bpm::ModelId {
-// 	hashing::twox_64(data)
-// }
-
-pub trait DeProcessStorage {
-	fn count_get() -> u128;
-	fn count_set(count: &u128);
-
-	//flows
-	// fn flows_get(deprocess: &types::DeProcessId, action: &types::Action) -> types::Action;
-	// fn flows_set(deprocess: &types::DeProcessId, action: &types::Action, target: types::Action);
-
-	//actors
-	// fn actors_get(deprocess: &types::DeProcessId, action: &types::Action) -> types::Actor;
-	// fn actors_set(deprocess: &types::DeProcessId, action: &types::Action, actor: &types::Actor);
-
-	fn current_get(deprocess: &types::DeProcessId) -> &types::Action;
-	fn current_set(deprocess: &types::DeProcessId, action: &types::Action);
-	fn current_has(deprocess: &types::DeProcessId) -> bool;
-
-	// fn data_get(deprocess: &types::DeProcessId, action: &types::Action) -> types::Data;
-	// fn data_set(deprocess: &types::DeProcessId, action: &types::Action, data: &types::Data);
-	// fn data_has(deprocess: &types::DeProcessId, action: &types::Action) -> bool;
+fn get_target_action<T: Config>(
+	sender: &T::AccountId,
+	deprocess: &types::DeProcessId,
+	action: &types::Action,
+	action_data: &types::ActionData
+) -> types::Action {
+	let target = <DeModelActionFlows<T>>::get(deprocess, types::to_bounded::<T>(action.to_vec()));
+	types::from_bounded::<T>(&target)
 }
 
-// pub const START: &'static types::ActionName = &types::from_str("START");
-// pub const END: types::ActionName = types::from_str("END");
+enum Permission {
 
-// pub fn from_bpmn(bpmn_xml: &bpmn::BpmnXml) {
-// 	// bpmn::read_bpmn(bpmn_xml)
-// }
+}
 
-// pub fn actor(deprocess: &types::DeProcessId, action: &types::Action) -> &types::Actor {
-// 	self.actors.get(action).unwrap()
-// }
-// pub fn target(deprocess: &types::DeProcessId, action: &types::Action) -> &types::Action {
-// 	self.flows.get(action).unwrap()
-// }
+fn _step<T: Config>(
+	sender: &T::AccountId,
+	deprocess: &types::DeProcessId,
+	action: &types::Action,
+	action_data: &types::ActionData
+) -> DispatchResult {
 
-// pub fn first(deprocess: &types::DeProcessId) -> &types::Action {
-// 	target(deprocess, &START)
-// }
+	let current = &<DeProcessCurrent<T>>::get(deprocess);
+	let current = types::from_bounded::<T>(current);
+	if *action != current {
+		// Error::<T>::NotDeProcessCurrentAction
+		return Ok(());
+	}
 
-// pub fn start(deprocess: &types::DeProcessId, current: Option<&types::Action>) {
-// 	let id = model.id;
-// 	let current = current.unwrap_or_else(|| model.first());
-// 	Self {
-// 		id,
-// 		model,
-// 		current: current.to_vec(),
-// 	};
-// }
+	if ! access::is_process_action_actor::<T>(deprocess, &current, sender) {
+		// Error::NotAssignedActorOfAction
+		return Ok(());
+	}
 
-// pub fn ended(deprocess: &types::DeProcessId, action: Option<&types::ActionName>) -> bool {
-// 	let action = action.unwrap_or_else(|| &END);
-// 	self.done.contains_key(action)
-// }
+	let target = get_target_action::<T>(sender, deprocess, action, action_data);
+	
+	<DeProcessCurrent<T>>::insert(deprocess, types::to_bounded::<T>(target.to_vec()));	
+	Pallet::<T>::deposit_event(Event::<T>::Step { deprocess: *deprocess, src: action.to_vec(), dst: target });
 
-// pub fn step(
-// 	deprocess: &types::DeProcessId,
-// 	actor: &types::Actor,
-// 	action: types::ActionName,
-// ) -> bool {
-// 	if action != self.current {
-// 		return false;
-// 	}
-// 	if actor != self.model.actor(action) {
-// 		return false;
-// 	}
-// 	self.done.insert(self.current, {});
-// 	self.current = self.model.next(self.current);
-// 	true
-// }
+	Ok(())
+}
+
+pub fn start<T: Config>(owner: &T::AccountId, deprocess: &types::DeProcessId) -> DispatchResult {
+	_step::<T>(owner, deprocess, &types::from_str("START"), &types::ActionData::new())
+}
+
+pub fn step<T: Config>(
+	sender: &T::AccountId,
+	deprocess: &types::DeProcessId,
+	action: &types::Action,
+	action_data: &types::ActionData
+) -> DispatchResult {
+	_step::<T>(sender, deprocess, action, action_data)
+}

@@ -2,6 +2,8 @@
 use sp_std::str;
 use sp_std::vec::Vec;
 
+use super::*;
+
 use sp_io::hashing;
 
 use frame_support::BoundedVec;
@@ -33,7 +35,7 @@ pub type Message = _Str;
 pub type Timestamp = i64;
 
 //TODO, enrich action data
-pub type Data = bool;
+pub type ActionData = Str;
 
 // pub fn toString(s: &_Str) -> String {
 //     str::from_utf8(s).unwrap()
@@ -62,20 +64,20 @@ fn hash(s: &Str) -> Hash {
 // pub type BoundedStr = Vec<[u8; 256]>;
 // pub type BoundedStr<T> = BoundedVec<u8, T::STR_NAME_MAX_LENGTH>;
 
-// pub fn from_bounded(s: &BoundedStr) -> Str {
-// 	s.try_into().unwrap()
-// }
-
-// pub fn to_bounded(s: &Str) -> BoundedStr {
-// 	s.try_into()
-// }
-
 // impl Str {
 // 	pub fn hash(&self) -> Hash {
 // 		hash(self)
-// 	}
-
-// 	pub fn bounded(&self) -> BoundedStr {
-// 		to_bounded(self)
-// 	}
 // }
+
+
+pub type BoundedStr<T: Config> = BoundedVec<u8, T::StrNameMaxLength>;
+
+pub fn to_bounded<T: Config>(s: types::Str) -> BoundedStr<T> {
+	let res: BoundedVec<_, _> = s.try_into().map_err(|()| Error::<T>::TooLong).unwrap();
+	res
+}
+
+pub fn from_bounded<T: Config>(s: &BoundedStr<T>) -> types::Str  {
+	<DeProcessCount<T>>::get();
+	s.to_vec()
+}
