@@ -17,12 +17,12 @@ type BalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::Balan
 // type NegativeImbalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::NegativeImbalance;
 
 mod sax;
-mod types;
+pub mod types;
 mod utils;
 
 mod access;
 
-mod bpm;
+pub mod bpm;
 mod bpmn;
 mod bpx;
 
@@ -80,6 +80,7 @@ pub mod pallet {
 			deprocess: types::DeProcessId,
 			src: types::Action,
 			dst: types::Action,
+			data: types::ActionData,
 		},
 	}
 
@@ -147,14 +148,16 @@ pub mod pallet {
 	// pub(super) type ProcessActionTimeStamp<T: Config> =
 	// 	StorageMap<_, Blake2_128Concat, types::DeProcessId, types::BoundedStr<T>, ValueQuery>;
 
-
 	// #[pallet::storage]
 	// pub(super) type ProcessActionActedAccount<T: Config> =
 	// 	StorageMap<_, Blake2_128Concat, types::DeProcessId, types::BoundedStr<T>, ValueQuery>;
 
-	// #[pallet::storage]
-	// pub(super) type ProcessActionData<T: Config> =
-	// 	StorageMap<_, Blake2_128Concat, types::DeProcessId, types::BoundedStr<T>, ValueQuery>;			
+	#[pallet::storage]
+	pub(super) type DeProcessActionData<T: Config> = StorageDoubleMap<_,
+		Twox64Concat, types::DeProcessId,
+		Blake2_128Concat, types::BoundedStr<T>,
+		types::BoundedStr<T>, ValueQuery,
+	>;
 
 	#[pallet::pallet]
 	#[pallet::generate_store(pub(super) trait Store)]
@@ -163,9 +166,10 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		#[pallet::weight(0)]
-		pub fn start(origin: OriginFor<T>, bpmn_str: types::Str) -> DispatchResult {
+		pub fn start(origin: OriginFor<T>, bpmn_str: types::Str, action_data: types::ActionData)
+			-> DispatchResult {
 			let sender = ensure_signed(origin)?;
-			bpx::start::<T>(&sender, &bpmn_str)
+			bpx::start::<T>(&sender, &bpmn_str, &action_data)
 		}		
 
 		#[pallet::weight(1_000_000)]

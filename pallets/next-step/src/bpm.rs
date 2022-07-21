@@ -35,15 +35,18 @@ fn _step<T: Config>(
 	}
 
 	let target = get_target_action::<T>(sender, deprocess, action, action_data);
+	<DeProcessCurrent<T>>::insert(deprocess, types::to_bounded::<T>(target.to_vec()));
+	<DeProcessActionData<T>>::insert(deprocess, types::to_bounded::<T>(action.to_vec()), types::to_bounded::<T>(action_data.to_vec()));
 	
-	<DeProcessCurrent<T>>::insert(deprocess, types::to_bounded::<T>(target.to_vec()));	
-	Pallet::<T>::deposit_event(Event::<T>::Step { deprocess: *deprocess, src: action.to_vec(), dst: target });
+	Pallet::<T>::deposit_event(Event::<T>::Step { deprocess: *deprocess, src: action.to_vec(), dst: target, data: action_data.to_vec() });
 
 	Ok(())
 }
 
-pub fn start<T: Config>(owner: &T::AccountId, deprocess: &types::DeProcessId) -> DispatchResult {
-	_step::<T>(owner, deprocess, &types::from_str("START"), &types::ActionData::new())
+pub fn start<T: Config>(owner: &T::AccountId, deprocess: &types::DeProcessId,
+	action_data: &types::ActionData) -> DispatchResult {
+	<DeProcessCurrent<T>>::insert(deprocess, types::to_bounded::<T>(types::from_str("START")));
+	_step::<T>(owner, deprocess, &types::from_str("START"), action_data)
 }
 
 pub fn step<T: Config>(
@@ -53,4 +56,12 @@ pub fn step<T: Config>(
 	action_data: &types::ActionData
 ) -> DispatchResult {
 	_step::<T>(sender, deprocess, action, action_data)
+}
+
+pub fn is_acted<T: Config>(deprocess: &types::DeProcessId, action: &types::Action) -> bool {
+	<DeProcessActionData<T>>::contains_key(deprocess, types::to_bounded::<T>(action.to_vec()))
+}
+
+pub fn action_data<T: Config>(deprocess: &types::DeProcessId, action: &types::Action) -> types::ActionData {
+	types::from_bounded::<T>(&<DeProcessActionData<T>>::get(deprocess, types::to_bounded::<T>(action.to_vec())))
 }

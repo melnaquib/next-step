@@ -2161,6 +2161,7 @@ dependencies = [
  "pallet-ethereum",
  "pallet-evm",
  "pallet-evm-precompile-modexp",
+ "pallet-evm-precompile-next-step",
  "pallet-evm-precompile-sha3fips",
  "pallet-evm-precompile-simple",
  "pallet-grandpa",
@@ -4460,6 +4461,17 @@ source = "git+https://github.com/paritytech/frontier.git?rev=cb041f1eb4f4acb7f95
 dependencies = [
  "fp-evm",
  "num",
+]
+
+[[package]]
+name = "pallet-evm-precompile-next-step"
+version = "0.2.0"
+dependencies = [
+ "fp-evm",
+ "pallet-next-step",
+ "ripemd",
+ "sp-io",
+ "sp-std",
 ]
 
 [[package]]

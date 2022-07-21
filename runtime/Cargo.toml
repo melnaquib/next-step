@@ -109,6 +109,10 @@ default-features = false
 git = 'https://github.com/paritytech/frontier.git'
 rev = 'cb041f1eb4f4acb7f9539d13d0b3e30a78b185a5'
 
+[dependencies.pallet-evm-precompile-next-step]
+default-features = false
+path = "../pallets/next-step/connectors/evm"
+
 [dependencies.pallet-grandpa]
 branch = 'master'
 default-features = false
@@ -287,6 +291,7 @@ std = [
     'pallet-evm-precompile-modexp/std',
     'pallet-evm-precompile-sha3fips/std',
     'pallet-evm-precompile-simple/std',
+    'pallet-evm-precompile-next-step/std',
     'pallet-hotfix-sufficients/std',
 ]
 with-paritydb-weights = []

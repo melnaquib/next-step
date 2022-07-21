@@ -2,13 +2,14 @@ use super::*;
 use frame_support::pallet_prelude::*;
 
 #[inline(always)]
-pub fn start<T: Config>(owner: &T::AccountId, bpmn_str: &bpmn::BpmnStr) -> DispatchResult {
+pub fn start<T: Config>(owner: &T::AccountId, bpmn_str: &bpmn::BpmnStr, action_data: &types::ActionData)
+	-> DispatchResult {
 	let deprocess = <DeProcessCount<T>>::get() + 1;
 	<DeProcessCount<T>>::set(deprocess);
 	<DeProcessOwners<T>>::insert(deprocess, owner);
 
 	bpmn::store_model_spec_bpmn::<T>(&deprocess, bpmn_str);
-	bpm::start::<T>(owner, &deprocess);
+	bpm::start::<T>(owner, &deprocess, action_data);
 
 	Ok(())
 }

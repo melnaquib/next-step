@@ -1,0 +1,35 @@
+[package]
+name = "pallet-evm-precompile-next-step"
+version = "0.2.0"
+authors = ["Mustafa Elnaquib <melnaquib@gmail.com>"]
+homepage = "https://readyvu.com/"
+edition = "2021"
+license = "AFPL"
+description = "NextStep precompiles for EVM pallet."
+repository = "https://github.com/melnaquib/next-step/"
+
+[dependencies]
+ripemd = { version = "0.1", default-features = false }
+
+# Substrate
+sp-io = { version = "6.0.0", git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
+sp-std = { default-features = false, version = "4.0.0", git = "https://github.com/paritytech/substrate.git", branch = 'master' }
+
+# Frontier
+fp-evm = { version = "3.0.0-dev", git = 'https://github.com/paritytech/frontier.git', rev = 'cb041f1eb4f4acb7f9539d13d0b3e30a78b185a5', default-features = false }
+
+pallet-next-step = { version = '0.2.0', path = '../../../next-step', default-features = false }
+
+
+# [dev-dependencies]
+# pallet-evm-test-vector-support = { version = "1.0.0-dev", path = "../../test-vector-support" }
+
+[features]
+default = ["std"]
+std = [
+	"ripemd/std",
+	# Substrate
+	"sp-io/std",
+	# Frontier
+	"fp-evm/std",
+]

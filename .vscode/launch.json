@@ -12,8 +12,16 @@
         "program": "${workspaceFolder}/target/release/frontier-template-node",
         "args": [
           "--dev",
+          // "--rpc-port",
+          // "8545",
           "--execution",
-          "native"
+          "native",
+          // "--execution-other",
+          // "native",
+          // "--execution-syncing",
+          // "native",
+          "--wasm-execution",
+          "interpreted-i-know-what-i-do"
         ],
         "cwd": "${workspaceFolder}",
         "sourceLanguages": [
