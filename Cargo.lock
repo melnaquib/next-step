@@ -4468,9 +4468,12 @@ name = "pallet-evm-precompile-next-step"
 version = "0.2.0"
 dependencies = [
  "fp-evm",
+ "pallet-evm",
  "pallet-next-step",
  "ripemd",
+ "sp-core",
  "sp-io",
+ "sp-runtime",
  "sp-std",
 ]
 

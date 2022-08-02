@@ -12,6 +12,8 @@ use sp_runtime::{
 	Perbill,
 };
 
+use sp_core::U256;
+
 type AccountIdOf<T: frame_system::Config> = <T as frame_system::Config>::AccountId;
 type BalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::Balance;
 // type NegativeImbalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::NegativeImbalance;
@@ -75,12 +77,22 @@ pub mod pallet {
 
 		Start {
 			deprocess: types::DeProcessId,
+			account: T::AccountId,
 		},
 		Step {
 			deprocess: types::DeProcessId,
 			src: types::Action,
 			dst: types::Action,
 			data: types::ActionData,
+
+			account: T::AccountId,
+	
+			branch: types::ActionData,
+	
+			src_id: types::ActionId,
+			dst_id: types::ActionId,
+	
+			flow_id: types::FlowId,
 		},
 	}
 
@@ -97,12 +109,37 @@ pub mod pallet {
 		RoleNotAssignedToAccount, NotDeProcessCurrentAction,
 	}
 
+	pub fn on_err<T: Config>(e: &Error<T>) -> DispatchResult {
+		// TODO, handle errors
+		Ok(())
+	}	
+
 	//Model Data
+
 	#[pallet::storage]
-	pub(super) type DeModelActionFlows<T: Config> = StorageDoubleMap<_,
+	pub(super) type DeModelNameId<T: Config> = StorageDoubleMap<_,
 		Blake2_128Concat, types::DeProcessId,
-		Blake2_128Concat, types::BoundedStr<T>,
-		types::BoundedStr<T>, ValueQuery,
+		Blake2_128Concat, types::BoundedStr<T>, //name
+		types::BoundedStr<T>, ValueQuery, //id
+	>;
+
+	#[pallet::storage]
+	pub(super) type DeModelNodes<T: Config> = StorageDoubleMap<_,
+		Blake2_128Concat, types::DeProcessId,
+		Blake2_128Concat, types::BoundedStr<T>, //id
+		(bpm::NodeType, types::BoundedStr<T>,), //name, type,
+		OptionQuery,
+	>;
+
+	#[pallet::storage]
+	pub(super) type DeModelEdges<T: Config> = StorageNMap<
+    _,
+    (
+        NMapKey<Twox64Concat, types::DeProcessId>,
+        NMapKey<Blake2_128Concat, types::BoundedStr<T>>, // source id
+        NMapKey<Blake2_128Concat, U256>, //guard
+    ),
+	(types::BoundedStr<T>, types::BoundedStr<T>, ), ValueQuery, //flow id, destination id,
 	>;
 
 	//Owner Data
@@ -156,7 +193,7 @@ pub mod pallet {
 	pub(super) type DeProcessActionData<T: Config> = StorageDoubleMap<_,
 		Twox64Concat, types::DeProcessId,
 		Blake2_128Concat, types::BoundedStr<T>,
-		types::BoundedStr<T>, ValueQuery,
+		(types::ActionData, ), ValueQuery,
 	>;
 
 	#[pallet::pallet]
@@ -186,11 +223,11 @@ pub mod pallet {
 		#[pallet::weight(1_000_000)]
 		pub fn assign(
 			origin: OriginFor<T>,
-			account: <T::Lookup as StaticLookup>::Source,
 			role: types::Str,
+			account: T::AccountId,
 		) -> DispatchResult {
 			let sender = ensure_signed(origin)?;
-			let account = T::Lookup::lookup(account)?;
+			// let account = T::Lookup::lookup(account)?;
 			bpx::assign::<T>(&sender, &role, &
 				account)
 		}
@@ -198,12 +235,10 @@ pub mod pallet {
 		#[pallet::weight(1_000_000)]
 		pub fn unassign(
 			origin: OriginFor<T>,
-			account: <T::Lookup as StaticLookup>::Source,
 			role: types::Str,
 		) -> DispatchResult {
 			let sender = ensure_signed(origin)?;
-			let account = T::Lookup::lookup(account)?;
-			bpx::unassign::<T>(&sender, &role, &account)
+			bpx::unassign::<T>(&sender, &role)
 		}
 
 		#[pallet::weight(1_000_000)]

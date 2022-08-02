@@ -1,4 +1,4 @@
-version: "3.2"
+version: "3.3"
 
 services:
   next-step:
@@ -26,9 +26,8 @@ services:
     depends_on:
       - next-step
       
-  remix:
-    image: remixproject/remix-ide:latest
-    ports:
-      - "8080:80"
-    profiles:
-      - local
+  # remix:
+  #   image: remixproject/remix-ide:latest
+  #   ports:
+  #     - "8080:80"
+      

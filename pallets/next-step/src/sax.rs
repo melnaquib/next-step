@@ -11,8 +11,13 @@ pub type OnElementEnd<'a> = dyn FnMut(&Vec<&str>, &Vec<BTreeMap<&str, types::Str
 pub fn visit_element_end(xml_str: &XmlStr, on_element_end: & mut OnElementEnd) {
 	// micro Xml cannot process xml declaration
 	// so skipping first line; first newline character
-	let index = xml_str.iter().position(|&c| c == b'\n').unwrap();
-	let xml_str = &xml_str[index..].to_vec();
+	// check if there is a PI
+	let index = if '?' == xml_str[1] as char {
+		1 + xml_str.iter().position(|&c| c == b'\n').unwrap()
+	} else {
+		0
+	};
+	let xml_str = &xml_str[index ..].to_vec();
 
 	let mut reader_iterator = ReaderForMicroXml::new(types::to_str(xml_str));
 

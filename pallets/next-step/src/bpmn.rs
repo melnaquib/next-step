@@ -11,6 +11,8 @@ use sp_std::rc::{Rc};
 
 use unborrow::unborrow;
 
+use sp_std::str::FromStr;
+
 pub type BpmnStr = types::Str;
 
 pub enum ActorType {
@@ -32,75 +34,77 @@ impl ActorType {
 
 pub fn store_model_spec_bpmn<T: Config>(deprocess: &types::DeProcessId, bpmn_str: &BpmnStr) -> bool {
 
-    let index = bpmn_str.iter().position(|&c| c == 0x0a).unwrap();
-    let bpmn_str = &bpmn_str[index + 1 ..].to_vec();
-
-    let mut process_participants: Rc<RefCell<BiMap<types::Str, types::Actor>>> = Rc::new(RefCell::new(BiMap::new()));
-    let mut task_ids_names: Rc<RefCell<BiMap<types::ActionId, types::ActionName>>> = Rc::new(RefCell::new(BiMap::new()));
+    fn last<'a>(path: &'a Vec<&str>) -> &'a str {
+        let last: &str = *path.last().unwrap();
+        let start = if last.starts_with("bpmn:") {
+            5
+        } else {
+			0
+		};
+		let last = &last[start ..];
+        last
+    }
 
     {
-        let mut process_participants = process_participants.borrow_mut();
         let mut get_process_participants =
         |path: &Vec<&str>, attrs: &Vec<BTreeMap<&str, types::Str>>| {
-            match *path.last().unwrap_or(&"") {
-                "participant" => {
-                    process_participants.insert(
-                        attrs.last().unwrap()["processRef"].clone(),
-                        attrs.last().unwrap()["name"].clone(),
-                    );
-                },
-                _ => {}
+            let el_name = last(path);
+            let el_attrs = attrs.last().unwrap();
+            let typ = bpm::NodeType::from_str(el_name).unwrap();
+            let depth = path.len();
+
+            let id = match typ {
+                bpm::NodeType::Participant => el_attrs["processRef"].clone(),
+                _ => types::str_unwrap_default(el_attrs.get("id")).clone(),
+            };
+            let name = match typ {
+                bpm::NodeType::Start => types::from_str("START"),
+                bpm::NodeType::End => types::from_str("END"),
+                _ => types::str_unwrap_default(el_attrs.get("name")).to_vec(),
+            };
+            
+            {
+                let id = types::to_bounded::<T>(id.to_vec());
+                let name_s = types::to_bounded::<T>(name.to_vec());
+
+                if !id.is_empty() {
+                    <DeModelNodes<T>>::insert(deprocess, id.clone(), (typ.clone(), name_s.clone()));
+                    if bpm::NodeType::Task == typ || bpm::NodeType::Start == typ || bpm::NodeType::End == typ {
+                        <DeModelNameId<T>>::insert(deprocess, name_s.clone(), id.clone()); //reverse lookup;
+                    }
+                };
+
+                if bpm::NodeType::SequenceFlow == typ || bpm::NodeType::MessageFlow == typ {
+                    let attrs = attrs.last().unwrap();
+                    let branch = U256::from_dec_str(types::to_str(&name)).unwrap_or_default();
+
+                    let src_id = types::to_bounded::<T>(el_attrs["sourceRef"].to_vec());
+                    let dst_id = types::to_bounded::<T>(attrs["targetRef"].to_vec());
+
+                    <DeModelEdges<T>>::insert((deprocess, src_id, branch), (id, dst_id,));
+                }
+            }
+
+            if bpm::NodeType::Task == typ {
+
+                let participant = types::str_unwrap_default(attrs[1].get("name")).to_vec();
+                let lane = if depth > 3 {
+                    types::str_unwrap_default(attrs[2].get("name")).to_vec()
+                } else {
+                    types::Str::default()
+                };
+                let lane_set = if depth > 4 {
+                    types::str_unwrap_default(attrs[3].get("name"))
+                } else {
+                    types::Str::default()
+                };
+
+                let account = access::get_process_action_account::<T>(deprocess, &name, &participant, &lane, &lane_set);
+                let id = types::to_bounded::<T>(id);
+                <DeProcessActionAccounts<T>>::insert(deprocess, id, account);
             }
         };
         sax::visit_element_end(&bpmn_str, & mut get_process_participants);
-    }
-
-    {
-        let mut task_ids_names = task_ids_names.borrow_mut();
-        let mut process_participants = process_participants.borrow_mut();
-        let mut get_tasks = move |path: &Vec<&str>, attrs: &Vec<BTreeMap<&str, types::Str>>| {
-            let name = match *path.last().unwrap_or(&"") {
-                "startEvent" | "bpmn:startEvent" => types::from_str("START"),
-                "endEvent" | "bpmn:endEvent" => types::from_str("END"),
-                "task" | "bpmn:task" => attrs.last().unwrap()["name"].to_vec(),
-                _ => types::Str::new()
-            };
-            let action = types::to_bounded::<T>(name.to_vec());
-            if ! action.is_empty() {
-                task_ids_names.insert(attrs.last().unwrap()["id"].clone(), name.to_vec());
-                let account = if name == types::from_str("START") {
-                    <DeProcessOwners<T>>::get(deprocess).unwrap()
-                } else {
-                    let depth = path.len();
-                    let get_name_at = |level: usize| -> types::Str {
-                        if depth > level {
-                            attrs[level].get("name").unwrap_or(&types::Str::new()).to_vec()
-                        } else {
-                            types::Str::new()
-                        }
-                    };
-                    access::get_process_action_account::<T>(deprocess, &action, &get_name_at(2), &get_name_at(3), &get_name_at(4))
-                };
-
-                <DeProcessActionAccounts<T>>::insert(deprocess, action, account);
-            }
-        };
-        sax::visit_element_end(&bpmn_str, & mut get_tasks);
-    }
-
-    {
-        let task_ids_names = task_ids_names.borrow();
-        let mut get_flows = |path: &Vec<&str>, attrs: &Vec<BTreeMap<&str, types::Str>>|  {
-            match *path.last().unwrap_or(&"") {
-                "messageFlow" | "bpmn:messageFlow" | "sequenceFlow" | "bpmn:sequenceFlow" => {
-                    let src = task_ids_names.get_by_left(&attrs.last().unwrap()["sourceRef"]).unwrap().to_vec();
-                    let dst = task_ids_names.get_by_left(&attrs.last().unwrap()["targetRef"]).unwrap().to_vec();
-                    <DeModelActionFlows<T>>::insert(deprocess, types::to_bounded::<T>(src), types::to_bounded::<T>(dst));
-                },
-                _ => {}
-            };
-        };
-        sax::visit_element_end(&bpmn_str, & mut get_flows);
     }
 
     true

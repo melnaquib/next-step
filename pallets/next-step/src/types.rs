@@ -1,6 +1,7 @@
 // use sp_std::prelude::*;
 use sp_std::str;
 use sp_std::vec::Vec;
+use sp_core::U256;
 
 use super::*;
 
@@ -10,6 +11,9 @@ use frame_support::BoundedVec;
 
 type _Str = Vec<u8>;
 pub type Str = _Str;
+
+pub type TimeStamp = u128;
+
 
 type Name = Str;
 type Id = Str;
@@ -25,17 +29,22 @@ pub type ActorName = Name;
 pub type Action = ActionName;
 pub type Actor = ActorName;
 
+pub type FlowId = Id;
+
 pub type Pool = Name;
 pub type Lane = Name;
 pub type Assignee = Name;
 // pub type Task = str;
+
 
 pub type Message = _Str;
 
 pub type Timestamp = i64;
 
 //TODO, enrich action data
-pub type ActionData = Str;
+// pub type ActionData = Str;
+// pub type ActionData = U256;
+pub type ActionData = U256;
 
 // pub fn toString(s: &_Str) -> String {
 //     str::from_utf8(s).unwrap()
@@ -53,6 +62,18 @@ pub type Hash = [u8; 32];
 
 fn hash(s: &Str) -> Hash {
 	hashing::blake2_256(&s.to_vec())
+}
+
+pub fn str_default() -> Str {
+	Str::new()
+}
+
+pub fn str_unwrap_default(o: Option<&Str>) -> Str {
+	if o.is_some() {
+		o.unwrap().to_vec()
+	} else {
+		str_default()
+	}
 }
 
 // pub type STR_NAME_MAX_LENGTH: u128 = 256;

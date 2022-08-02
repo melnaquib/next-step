@@ -172,7 +172,7 @@ fn testnet_genesis(
 					// SS58: 5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY
 					// hex: 0xd43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d
 					// Using the full hex key, truncating to the first 20 bytes (the first 40 hex chars)
-					H160::from_str("d43593c715fdd31c61141abd04a99fd6822c8558")
+					H160::from_str("0xf24FF3a9CF04c71Dbc94D0b566f7A27B94566cac")
 						.expect("internal H160 is valid; qed"),
 					fp_evm::GenesisAccount {
 						balance: U256::from_str("0xffffffffffffffffffffffffffffffff")
@@ -182,6 +182,28 @@ fn testnet_genesis(
 						storage: Default::default(),
 					},
 				);
+				let preseeded = vec![
+					"f24FF3a9CF04c71Dbc94D0b566f7A27B94566cac",
+					"3Cd0A705a2DC65e5b1E1205896BaA2be8A07c6e0",
+					"798d4Ba9baf0064Ec19eB4F0a1a45785ae9D6DFc",
+					"773539d4Ac0e786233D90A233654ccEE26a613D9",
+					"Ff64d3F6efE2317EE2807d223a0Bdc4c0c49dfDB",
+					"C0F0f4ab324C46e55D02D0033343B4Be8A55532d",
+
+				];
+				for account in preseeded {
+					map.insert(
+						H160::from_str(account)
+							.expect("internal H160 is valid; qed"),
+						fp_evm::GenesisAccount {
+							balance: U256::from_str("0x0000000000000000ffffffffffffffff")
+								.expect("internal U256 is valid; qed"),
+							code: Default::default(),
+							nonce: Default::default(),
+							storage: Default::default(),
+						},
+					);
+				}
 				map.insert(
 					// H160 address of CI test runner account
 					H160::from_str("6be02d1d3665660d22ff9624b7be0551ee1ac91b")

@@ -48,8 +48,9 @@ where
 			a if a == hash(1024) => Some(Sha3FIPS256::execute(handle)),
 			a if a == hash(1025) => Some(ECRecoverPublicKey::execute(handle)),
 			// NextStep :
-			a if a == hash(0x0800) =>
-				Some(NextStep::<R>::execute(handle)),
+			a if a == hash(0x0800) => {
+				Some(NextStep::<R>::execute(handle))
+			},
 			_ => None,
 		}
 	}

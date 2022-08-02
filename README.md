@@ -1,5 +1,7 @@
 # Next Step
 
+DISCLAIMER; A PROOF Of CONCEPT, DO NOT USE IN PRODUCTION YET.
+
 Next Step intends to complement existing various smart contract tools ecosystems with an efficient way to model and execute business process models
 
 Current most smart contract use cases-most notably supply chains- is executing business processes that go well beyond one business Entity into a process contributed to by various participants.

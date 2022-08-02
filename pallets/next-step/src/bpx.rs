@@ -35,7 +35,6 @@ pub fn assign<T: Config>(
 pub fn unassign<T: Config>(
 	owner: &T::AccountId,
 	role: &types::Str,
-	account: &T::AccountId,
 ) -> DispatchResult {
-	access::unassign::<T>(owner, role, account)
+	access::unassign::<T>(owner, role)
 }

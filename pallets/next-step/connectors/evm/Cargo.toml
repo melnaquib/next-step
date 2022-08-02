@@ -14,10 +14,12 @@ ripemd = { version = "0.1", default-features = false }
 # Substrate
 sp-io = { version = "6.0.0", git = "https://github.com/paritytech/substrate", branch = "master", default-features = false }
 sp-std = { default-features = false, version = "4.0.0", git = "https://github.com/paritytech/substrate.git", branch = 'master' }
+sp-core = { default-features = false, version = "6.0.0", git = "https://github.com/paritytech/substrate.git", branch = 'master' }
+sp-runtime = { default-features = false, version = "6.0.0", git = "https://github.com/paritytech/substrate.git", branch = 'master' }
 
 # Frontier
 fp-evm = { version = "3.0.0-dev", git = 'https://github.com/paritytech/frontier.git', rev = 'cb041f1eb4f4acb7f9539d13d0b3e30a78b185a5', default-features = false }
-
+pallet-evm = { version = "6.0.0-dev", git = 'https://github.com/paritytech/frontier.git', rev = 'cb041f1eb4f4acb7f9539d13d0b3e30a78b185a5', default-features = false }
 pallet-next-step = { version = '0.2.0', path = '../../../next-step', default-features = false }
 
 

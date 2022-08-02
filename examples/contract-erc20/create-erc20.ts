@@ -4,6 +4,19 @@ import { U8aFixed } from '@polkadot/types/codec';
 import * as web3Utils from 'web3-utils';
 import * as crypto from '@polkadot/util-crypto';
 
+
+const alice_address = "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY";
+const aliceEvmAccount = `0x${crypto.blake2AsHex(crypto.decodeAddress(alice_address), 256).substring(26)}`;
+const aliceMapKey = aliceEvmAccount.toString().substring(2).padStart(64, '0');
+console.log("ADDRESS");
+console.log(aliceEvmAccount);
+console.log(aliceMapKey);
+console.log("ADDRESS");
+
+
+const Alice = '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY';
+
+
 // Provider is set to 127.0.0.1 for development
 const wsProvider = new WsProvider("ws://127.0.0.1:9944");
 
