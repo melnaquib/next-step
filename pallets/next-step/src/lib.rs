@@ -14,6 +14,8 @@ use sp_runtime::{
 
 use sp_core::U256;
 
+use pallet_timestamp::{self as timestamp};
+
 type AccountIdOf<T: frame_system::Config> = <T as frame_system::Config>::AccountId;
 type BalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::Balance;
 // type NegativeImbalanceOf<T> = <<T as Config>::Currency as Currency<AccountIdOf<T>>>::NegativeImbalance;
@@ -37,7 +39,7 @@ pub mod pallet {
 	use frame_system::pallet_prelude::*;
 
 	#[pallet::config]
-	pub trait Config: frame_system::Config {
+	pub trait Config: frame_system::Config + timestamp::Config {
 		/// The overarching event type.
 		type Event: From<Event<Self>> + IsType<<Self as frame_system::Config>::Event>;
 
@@ -193,7 +195,7 @@ pub mod pallet {
 	pub(super) type DeProcessActionData<T: Config> = StorageDoubleMap<_,
 		Twox64Concat, types::DeProcessId,
 		Blake2_128Concat, types::BoundedStr<T>,
-		(types::ActionData, ), ValueQuery,
+		(types::TimeStamp, types::ActionData, ), ValueQuery,
 	>;
 
 	#[pallet::pallet]

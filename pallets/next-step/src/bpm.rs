@@ -92,7 +92,7 @@ fn _do_transition<T: Config>(
 	let (flow_target_type, flow_target_name) = <DeModelNodes<T>>::get(deprocess, flow_target_id.clone()).unwrap();
 
 	<DeProcessCurrent<T>>::insert(deprocess, flow_target_id.clone());
-	<DeProcessActionData<T>>::insert(deprocess, current_id, (action_data,));
+	<DeProcessActionData<T>>::insert(deprocess, current_id, (utils::now::<T>(), action_data,));
 	
 	Pallet::<T>::deposit_event(Event::<T>::Step {
 		deprocess: *deprocess,
@@ -130,7 +130,7 @@ fn _transition_auto_node<T: Config>(
 
 	let branch = if NodeType::ExclusiveGateway == typ {
 		let check_action_id = <DeModelNameId<T>>::get(deprocess, name);
-		let (action_data, ) = <DeProcessActionData<T>>::get(deprocess, check_action_id);
+		let (timestamp, action_data, ) = <DeProcessActionData<T>>::get(deprocess, check_action_id);
 		action_data
 	} else {
 		types::ActionData::default()
@@ -185,7 +185,6 @@ fn _step<T: Config>(
 	};
 
 	if result.is_ok() {
-		<DeProcessActionData<T>>::insert(deprocess, types::to_bounded::<T>(action_id.clone()), (action_data,));
 		_transition_auto::<T>(sender, deprocess, action_id, action_data)
 	} else {
 		result
@@ -219,14 +218,20 @@ pub fn is_acted<T: Config>(deprocess: &types::DeProcessId, action: &types::Actio
 	<DeProcessActionData<T>>::contains_key(deprocess, action_id)
 }
 
-pub fn act<T: Config>(deprocess: &types::DeProcessId, action: &types::Action, action_data: &types::ActionData) -> bool {
+// pub fn act<T: Config>(deprocess: &types::DeProcessId, action: &types::Action, action_data: &types::ActionData) -> bool {
+// 	let action = types::to_bounded::<T>(action.to_vec());
+// 	let action_id = <DeModelNameId<T>>::get(deprocess, action);
+// 	<DeProcessActionData<T>>::contains_key(deprocess, action_id)
+// }
+
+pub fn action_timestamp<T: Config>(deprocess: &types::DeProcessId, action: &types::Action) -> types::TimeStamp {
 	let action = types::to_bounded::<T>(action.to_vec());
 	let action_id = <DeModelNameId<T>>::get(deprocess, action);
-	<DeProcessActionData<T>>::contains_key(deprocess, action_id)
+	<DeProcessActionData<T>>::get(deprocess, action_id).0
 }
 
 pub fn action_data<T: Config>(deprocess: &types::DeProcessId, action: &types::Action) -> types::ActionData {
 	let action = types::to_bounded::<T>(action.to_vec());
 	let action_id = <DeModelNameId<T>>::get(deprocess, action);
-	<DeProcessActionData<T>>::get(deprocess, action_id).0
+	<DeProcessActionData<T>>::get(deprocess, action_id).1
 }

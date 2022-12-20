@@ -39,8 +39,6 @@ pub type Assignee = Name;
 
 pub type Message = _Str;
 
-pub type Timestamp = i64;
-
 //TODO, enrich action data
 // pub type ActionData = Str;
 // pub type ActionData = U256;

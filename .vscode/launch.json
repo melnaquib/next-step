@@ -9,7 +9,7 @@
         "request": "launch",
         "name": "Build & Launch NextStep Node (Linux)",
         "preLaunchTask": "Build NextStep (debug symbols, no warnings)",
-        "program": "${workspaceFolder}/target/release/frontier-template-node",
+        "program": "${workspaceFolder}/target/release/next-step",
         "args": [
           "--dev",
           // "--rpc-port",
@@ -35,7 +35,7 @@
         "type": "lldb",
         "request": "launch",
         "name": "Launch NextStep Node (Linux)",
-        "program": "${workspaceFolder}/target/release/frontier-template-node",
+        "program": "${workspaceFolder}/target/release/next-step",
         "args": [
           "--dev",
           // "--rpc-port",

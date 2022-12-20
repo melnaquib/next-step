@@ -18,5 +18,7 @@
     "port_p2p": 19931,
     "port_rpc": 19932,
     "port_ws": 19933
-  }
+  },
+  "editor.tabCompletion": "on",
+  "diffEditor.codeLens": true
 }

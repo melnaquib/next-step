@@ -26,6 +26,8 @@ sp-io = { default-features = false, version = "6.0.0", git = "https://github.com
 
 sp-runtime = { default-features = false, version = "6.0.0", git = "https://github.com/paritytech/substrate.git", branch = 'master' }
 
+pallet-timestamp = { version = "4.0.0-dev", git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
+
 reader_for_microxml = { version = "2.0.1", default-features = false }
 
 bimap = { version = "0.6.2", default-features = false }
@@ -48,6 +50,7 @@ std = [
     'sp-core/std',
     'sp-io/std',
     'sp-runtime/std',
+	"pallet-timestamp/std",
 ]
 
 runtime-benchmarks = ["frame-benchmarking/runtime-benchmarks"]

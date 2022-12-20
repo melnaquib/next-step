@@ -5,7 +5,7 @@ FROM rustlang/rust:nightly
 
 
 ARG PROFILE=release
-WORKDIR /frontier
+WORKDIR /next-step
 
 # Upcd dates core parts
 RUN apt-get update -y && \
@@ -14,9 +14,9 @@ RUN apt-get update -y && \
 # Install rust wasm. Needed for substrate wasm engine
 RUN rustup target add wasm32-unknown-unknown
 
-# Download Frontier repo
-RUN git clone https://github.com/paritytech/frontier /frontier
-RUN cd /frontier && git submodule init && git submodule update
+# Download next-step repo
+RUN git clone https://github.com/melnaquib/next-step /next-step
+RUN cd /next-step && git submodule init && git submodule update
 
 # Download rust dependencies and build the rust binary
 RUN cargo build "--$PROFILE"
@@ -33,5 +33,5 @@ ENV PROFILE ${PROFILE}
 # The execution will re-compile the project to run it
 # This allows to modify the code and not have to re-compile the
 # dependencies.
-CMD cargo run --bin frontier-template-node "--$PROFILE" -- --dev --execution native \
-	--prometheus-external --unsafe-rpc-external --unsafe-ws-external
+CMD cargo run --bin next-step "--$PROFILE" -- --dev --execution native \
+	--prometheus-external --execution-other native --wasm-execution interpreted-i-know-what-i-do --unsafe-rpc-external --unsafe-ws-external

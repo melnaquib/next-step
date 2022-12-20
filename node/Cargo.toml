@@ -4,7 +4,7 @@ build = 'build.rs'
 description = 'A fresh FRAME-based Substrate node, ready for hacking.'
 edition = '2021'
 license = 'Unlicense'
-name = 'frontier-template-node'
+name = 'next-step'
 publish = false
 version = '0.0.0'
 [package.metadata.docs.rs]
